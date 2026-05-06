@@ -52,10 +52,12 @@ export default function Materials() {
     return allCats.filter(c => c.toLowerCase().includes(catInput.toLowerCase()))
   }, [catInput, allCats])
 
-  const active   = materials.filter(m => !m.isArchived)
+  const active   = (materials || []).filter(m => !m?.isArchived)
   const filtered = active.filter(m => {
-    const ms = m.name.toLowerCase().includes(search.toLowerCase())
-    const mc = catFilter === 'All' || m.category === catFilter
+    const name = m?.name || 'Unnamed Material'
+    const cat  = m?.category || 'Other'
+    const ms = name.toLowerCase().includes(search.toLowerCase())
+    const mc = catFilter === 'All' || cat === catFilter
     return ms && mc
   })
   const { page, setPage, totalPages, paginated, total } = usePagination(filtered, 10)

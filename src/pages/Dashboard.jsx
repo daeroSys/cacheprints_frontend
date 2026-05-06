@@ -125,7 +125,7 @@ export default function Dashboard({ onNav }) {
                     <div key={mat.id} className="alert-item">
                       <div className="alert-item__info">
                         <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                          <p className={`alert-item__name alert-item__name--${mat.status.toLowerCase()}`}>{mat.name}</p>
+                          <p className={`alert-item__name alert-item__name--${mat.status.toLowerCase()}`}>{mat.name || 'Unnamed Material'}</p>
                           <Badge status={isCrit ? 'status-red' : 'status-orange'}>{mat.status}</Badge>
                         </div>
                         <p className={`alert-item__detail alert-item__detail--${mat.status.toLowerCase()}`}>{mat.effectiveStock} {mat.unit} available (Lead time: {mat.leadTime || 0}d)</p>

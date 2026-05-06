@@ -39,8 +39,10 @@ export default function Stock() {
   const active = materials.filter(m => !m.isArchived)
 
   const filtered = active.filter(m => {
-    const matchSearch = m.name.toLowerCase().includes(search.toLowerCase()) || m.category.toLowerCase().includes(search.toLowerCase())
-    const matchLevel = levelFilter === 'All' ? true : m.status === levelFilter
+    const name = m?.name || 'Unnamed Material'
+    const cat  = m?.category || 'Other'
+    const matchSearch = name.toLowerCase().includes(search.toLowerCase()) || cat.toLowerCase().includes(search.toLowerCase())
+    const matchLevel = levelFilter === 'All' ? true : m?.status === levelFilter
     return matchSearch && matchLevel
   })
 
@@ -164,7 +166,7 @@ export default function Stock() {
             <div key={mat.id} className={`stock-card stock-card--hoverable ${cardClass}`} style={{ animationDelay:`${i*25}ms` }}>
               <div className={`stock-card__pin stock-card__pin--${mat.status.toLowerCase()}`}>{mat.status.toUpperCase()}</div>
               <div className="stock-card__top">
-                <div><p className="stock-card__name">{mat.name}</p><p className="stock-card__supplier">{mat.category}</p></div>
+                <div><p className="stock-card__name">{mat.name || 'Unnamed Material'}</p><p className="stock-card__supplier">{mat.category || 'Other'}</p></div>
               </div>
               <div className="stock-card__qty" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                 <div>
