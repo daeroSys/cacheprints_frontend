@@ -1,0 +1,30 @@
+/* Category combobox dropdown */
+.cat-dropdown {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0; right: 0;
+  background: var(--white);
+  border: 1px solid var(--gray-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 200;
+  max-height: 180px;
+  overflow-y: auto;
+}
+.cat-dropdown__item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 9px 14px;
+  font-size: 13.5px;
+  color: var(--black);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.cat-dropdown__item:hover,
+.cat-dropdown__item--active {
+  background: var(--gray-surface);
+  font-weight: 500;
+}

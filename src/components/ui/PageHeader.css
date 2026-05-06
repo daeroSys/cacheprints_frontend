@@ -1,0 +1,12 @@
+.page-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 28px;
+  flex-wrap: wrap; gap: 12px;
+}
+.page-header__title {
+  font-size: 22px; font-weight: 600;
+  color: var(--black); letter-spacing: -0.02em;
+}
+.page-header__sub {
+  font-size: 13px; color: var(--gray-mid); margin-top: 2px;
+}

@@ -1,0 +1,21 @@
+.archive-tabs {
+  display: flex; gap: 4px;
+  margin-bottom: 18px;
+  background: var(--gray-surface);
+  border-radius: var(--radius-lg);
+  padding: 4px;
+  width: fit-content;
+}
+.archive-tab {
+  padding: 8px 18px;
+  border-radius: var(--radius-md);
+  font-size: 13.5px; font-weight: 500;
+  color: var(--gray-mid);
+  transition: all var(--transition);
+}
+.archive-tab:hover { color: var(--black); }
+.archive-tab--active {
+  background: var(--white);
+  color: var(--black);
+  box-shadow: var(--shadow-sm);
+}

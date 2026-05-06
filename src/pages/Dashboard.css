@@ -1,0 +1,140 @@
+.dashboard__stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.dashboard__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.dash-card {
+  background: var(--white);
+  border: 1px solid var(--gray-border);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+}
+.dash-card__head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.dash-card__title {
+  font-size: 14px; font-weight: 600; color: var(--black);
+}
+.dash-card__link {
+  font-size: 12px; color: var(--gray-mid);
+  transition: color var(--transition);
+}
+.dash-card__link:hover { color: var(--black); }
+.dash-empty {
+  font-size: 13px; color: var(--gray-mid);
+  text-align: center; padding: 20px 0;
+}
+
+/* Low Stock */
+.alert-list { display: flex; flex-direction: column; gap: 10px; }
+.alert-item {}
+.alert-item__info {
+  display: flex; flex-direction: column;
+  margin-bottom: 5px;
+}
+.alert-item__name { font-size: 13px; font-weight: 500; }
+.alert-item__name--critical { color: #c62828; }
+.alert-item__name--low { color: #e65100; }
+.alert-item__name--healthy { color: #2e7d32; }
+.alert-item__name--overstock { color: #1565c0; }
+.alert-item__detail { font-size: 12px; }
+.alert-item__detail--critical { color: #c62828; }
+.alert-item__detail--low { color: #ef6c00; }
+.alert-item__detail--healthy { color: #2e7d32; }
+.alert-item__detail--overstock { color: #1565c0; }
+.alert-item__bar {
+  height: 4px; border-radius: 3px; overflow: hidden;
+}
+.alert-item__bar--critical { background: #fdecea; }
+.alert-item__bar--low { background: #fff3e0; }
+.alert-item__bar--healthy { background: #e8f5e9; }
+.alert-item__bar--overstock { background: #e3f2fd; }
+
+.alert-item__bar-fill {
+  height: 100%; border-radius: 3px;
+  transition: width 600ms ease;
+}
+.alert-item__bar-fill--critical { background: #e53935; }
+.alert-item__bar-fill--low { background: #fb8c00; }
+.alert-item__bar-fill--healthy { background: #43a047; }
+.alert-item__bar-fill--overstock { background: #1e88e5; }
+
+/* Transactions */
+.txn-list { display: flex; flex-direction: column; }
+.txn-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--gray-border);
+}
+.txn-item:last-child { border-bottom: none; }
+.txn-item__dot {
+  width: 8px; height: 8px;
+  border-radius: 50%; flex-shrink: 0;
+}
+.txn-item__dot--in  { background: #2e7d32; }
+.txn-item__dot--out { background: #c62828; }
+.txn-item__dot--adj { background: #827717; }
+.txn-item__info { flex: 1; min-width: 0; }
+.txn-item__name {
+  font-size: 13px; font-weight: 500; color: var(--black);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.txn-item__meta { font-size: 12px; color: var(--gray-mid); }
+.txn-item__qty { font-size: 13px; font-weight: 600; }
+.txn-item__qty--in  { color: #2e7d32; }
+.txn-item__qty--out { color: #c62828; }
+
+/* Stock movement rows */
+.dash-movement-list { display: flex; flex-direction: column; gap: 10px; }
+.dash-movement-row { display: flex; align-items: center; gap: 10px; }
+.dash-movement-name {
+  width: 140px; font-size: 12.5px; color: var(--gray-dark);
+  flex-shrink: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.dash-movement-bar-track {
+  flex: 1; height: 6px; background: var(--gray-border);
+  border-radius: 4px; overflow: hidden;
+}
+.dash-movement-bar-fill {
+  height: 100%; border-radius: 4px;
+  transition: width 700ms ease;
+}
+.dash-movement-bar-fill--out { background: #e53935; }
+.dash-movement-bar-fill--in  { background: #2e7d32; }
+.dash-movement-val {
+  width: 56px; text-align: right;
+  font-size: 12.5px; font-weight: 600; color: var(--black);
+}
+
+/* Week label */
+.dashboard__week-label {
+  font-size: 12.5px;
+  color: var(--gray-mid);
+  margin-bottom: 16px;
+  padding: 8px 14px;
+  background: var(--white);
+  border: 1px solid var(--gray-border);
+  border-radius: var(--radius-md);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.dashboard__week-label strong { color: var(--black); }
+.dashboard__week-hint {
+  font-size: 11px;
+  color: var(--gray-light);
+  font-style: italic;
+}
+
+@media (max-width: 1100px) {
+  .dashboard__stats { grid-template-columns: repeat(2, 1fr); }
+  .dashboard__grid  { grid-template-columns: 1fr; }
+}

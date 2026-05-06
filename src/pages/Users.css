@@ -1,0 +1,144 @@
+.users-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.user-card {
+  background: var(--white);
+  border: 1px solid var(--gray-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: box-shadow var(--transition), transform var(--transition);
+  animation: fadeUp 340ms cubic-bezier(0.4,0,0.2,1) both;
+}
+.user-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.user-card__avatar {
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 22px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+
+.user-card__info {
+  margin-bottom: 8px;
+}
+.user-card__name {
+  font-size: 15px; font-weight: 700;
+  color: var(--black); letter-spacing: -0.01em;
+  margin-bottom: 2px;
+}
+.user-card__username {
+  font-size: 12px; color: var(--gray-mid);
+}
+
+.user-card__role {
+  display: inline-block;
+  padding: 3px 14px;
+  border-radius: 20px;
+  font-size: 11px; font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.04em;
+  margin-bottom: 14px;
+}
+
+.user-card__details {
+  width: 100%;
+  border-top: 1px solid var(--gray-border);
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+}
+.user-card__detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+}
+.user-card__detail-label {
+  color: var(--gray-mid);
+  font-weight: 500;
+  flex-shrink: 0;
+  min-width: 80px;
+}
+.user-card__detail-val {
+  color: var(--black);
+  font-weight: 500;
+  text-align: right;
+  word-break: break-all;
+  font-size: 12px;
+}
+
+/* ── Actions on user card ── */
+.user-card {
+  position: relative;
+}
+.user-card__actions {
+  position: absolute;
+  top: 12px; right: 12px;
+  display: flex;
+  gap: 6px;
+}
+.user-card__action-btn {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: none;
+  border: 1.5px solid var(--gray-border);
+  color: var(--gray-mid);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition);
+  line-height: 1;
+}
+.user-card__action-btn--edit:hover {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1e40af;
+}
+.user-card__action-btn--delete:hover {
+  background: #fdecea;
+  border-color: #f5c6c6;
+  color: #c62828;
+}
+
+/* System badge for default admin */
+.user-card__system-badge {
+  position: absolute;
+  top: 12px; right: 12px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--gray-mid);
+  background: var(--gray-surface);
+  border: 1px solid var(--gray-border);
+  border-radius: 20px;
+  padding: 2px 8px;
+  letter-spacing: 0.04em;
+}
+
+/* btn-danger (used in delete modal) */
+.btn-danger {
+  background: #fdecea;
+  color: #c62828;
+  border: 1.5px solid #f5c6c6;
+}
+.btn-danger:hover {
+  background: #e53935;
+  color: #fff;
+  border-color: #e53935;
+}

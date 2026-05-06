@@ -1,0 +1,75 @@
+.account-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.account-profile-card {
+  background: var(--white);
+  border: 1px solid var(--gray-border);
+  border-radius: var(--radius-lg);
+  padding: 28px 22px;
+  text-align: center;
+}
+
+.account-avatar-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.account-avatar {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: var(--black);
+  color: var(--white);
+  font-size: 24px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: -0.02em;
+}
+.account-username {
+  font-size: 14px;
+  color: var(--gray-mid);
+  margin-bottom: 8px;
+}
+.account-role-badge {
+  display: inline-block;
+  padding: 3px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 0.04em;
+  margin-bottom: 16px;
+}
+.account-meta {
+  text-align: left;
+  border-top: 1px solid var(--gray-border);
+  padding-top: 14px;
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.account-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+.account-meta-row span { color: var(--gray-mid); }
+.account-meta-row strong { color: var(--black); font-weight: 600; }
+
+.account-form-card {
+  background: var(--white);
+  border: 1px solid var(--gray-border);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+}
+
+@media (max-width: 860px) {
+  .account-layout { grid-template-columns: 1fr; }
+}
