@@ -140,12 +140,18 @@ export default function Orders() {
   /* ── Table columns ── */
   const pendingCols = [
     { key: 'orderId', label: 'Order ID', render: v => <span style={{ fontFamily: 'monospace', fontWeight: 600, fontSize: 13 }}>{v}</span> },
-    { key: 'customer', label: 'Customer', render: (v, row) => <div><p style={{ fontWeight: 500 }}>{v}</p>{row.teamName && row.teamName !== v && <p style={{ fontSize: 12, color: 'var(--gray-dark)', fontWeight: 600 }}>{row.teamName}</p>}{row.productType ? <p style={{ fontSize: 11, color: 'var(--gray-mid)' }}>{row.productType}</p> : <p style={{ fontSize: 11, color: 'var(--gray-mid)' }}>{row.design}</p>}</div> },
+    { key: 'customer', label: 'Customer', render: (v, row) => (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+        <p style={{ fontWeight: 700, color: 'var(--black)', fontSize: 13, lineHeight: 1.2 }}>{v}</p>
+        <p style={{ fontSize: 11, color: '#444', fontWeight: 600 }}>{row.teamName || '—'}</p>
+        <p style={{ fontSize: 10, color: 'var(--gray-mid)', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.02em' }}>{row.productType || row.design || '—'}</p>
+      </div>
+    )},
     { key: 'rows', label: 'Items', render: (v, row) => <span style={{ fontSize: 12 }}>{(v || row.items || []).length} row{(v || row.items || []).length !== 1 ? 's' : ''}</span> },
     { key: 'deadline', label: 'Deadline', render: (v, row) => { const d = getDaysUntil(v); return <span style={{ color: d <= 3 ? '#c62828' : 'inherit', fontWeight: d <= 3 ? 600 : 400 }}>{formatDate(v)}{d <= 0 ? ' ⚠' : d <= 3 ? ` (${d}d)` : ''}</span> } },
     { key: 'status', label: 'Status', render: v => <Badge status={getStatusColor(v)}>{v}</Badge> },
     { key: 'payment', label: 'Payment', render: v => <Badge status={getStatusColor(v)}>{v}</Badge> },
-    { key: 'totalAmount', label: 'Amount', render: (v, row) => <div><p>{formatCurrency(v)}</p><p style={{ fontSize: 12, color: 'var(--gray-mid)' }}>Balance: {formatCurrency(totalDue(row))}</p></div> },
+    { key: 'totalAmount', label: 'Amount', render: (v, row) => <div><p>{formatCurrency(v || row.totalPrice)}</p><p style={{ fontSize: 12, color: 'var(--gray-mid)' }}>Balance: {formatCurrency(Math.max(0, (v || row.totalPrice || 0) - (row.paidAmount || 0)))}</p></div> },
     {
       key: 'id', label: '', render: (_, row) => (
         <div className="td-actions">
@@ -405,9 +411,9 @@ export default function Orders() {
               {[
                 ['Contact', viewModal.contact || '—'],
                 ['Design', ['Order Received', 'Designing'].includes(viewModal.status) ? '' : (viewModal.design || '—')],
-                ['Status', viewModal.status],
+                ['Status', viewModal.status || '—'],
                 ['Amount Paid', formatCurrency(viewModal.paidAmount || 0)],
-                ['Balance', formatCurrency(Math.max(0, (viewModal.totalAmount || 0) - (viewModal.paidAmount || 0)))],
+                ['Balance', formatCurrency(Math.max(0, (viewModal.totalAmount || viewModal.totalPrice || 0) - (viewModal.paidAmount || 0)))],
                 ['Deadline', formatDate(viewModal.deadline)],
                 ['Created', formatDate(viewModal.createdAt)],
                 ['Completed', viewModal.completedAt ? formatDate(viewModal.completedAt) : '—'],
