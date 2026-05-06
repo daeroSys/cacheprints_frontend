@@ -66,7 +66,16 @@ export function AppProvider({ children }) {
         console.error('Failed to fetch initial data:', err)
       }
     }
+
     initData()
+
+    // Background Polling: Refresh data every 30 seconds to keep systems in sync
+    const interval = setInterval(() => {
+      console.log('🔄 Background sync starting...')
+      initData()
+    }, 30000)
+
+    return () => clearInterval(interval)
   }, [])
 
   const refreshMaterials = async () => {
