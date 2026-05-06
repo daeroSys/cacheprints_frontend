@@ -122,7 +122,14 @@ export default function DesignFiles() {
   };
 
   const renderOrderCard = (order, i) => {
-    const files = order.designFiles || []
+    const synthesizedFiles = [
+      ...(order.designFiles || []),
+      ...(order.paymentReceipt ? [{ id: 'dp-receipt', name: 'Downpayment Proof of Payment', url: order.paymentReceipt, notes: 'Initial 20% Deposit Receipt', uploadedAt: order.paymentReceiptDate || order.createdAt }] : []),
+      ...(order.finalDesignUrl ? [{ id: 'final-design', name: 'Final Approved Design', url: order.finalDesignUrl, notes: 'Design for Printing', uploadedAt: order.updatedAt }] : []),
+      ...(order.finalPaymentReceipt ? [{ id: 'fp-receipt', name: 'Remaining Balance Proof of Payment', url: order.finalPaymentReceipt, notes: 'Final 80% Payment Receipt', uploadedAt: order.finalPaymentReceiptDate || order.updatedAt }] : []),
+      { id: 'jo-sheet', name: 'Job Order Sheet (System Generated)', url: null, type: 'sheet', notes: 'Digital Production Sheet', uploadedAt: order.updatedAt }
+    ]
+    const files = synthesizedFiles
     const status = displayStatus(order)
     return (
       <div key={order.id} className="df-card" style={{ animationDelay: `${i * 40}ms` }}>
@@ -162,29 +169,47 @@ export default function DesignFiles() {
           {files.length === 0 ? (
             <div className="df-card__no-files"><span>No files attached yet</span></div>
           ) : (
-            files.map(f => (
-              <div key={f.id} className="df-file-pill">
-                <span className="df-file-pill__icon">◈</span>
-                <div className="df-file-pill__info">
-                  {f.url
-                    ? <a
-                      href={f.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="df-file-pill__name df-file-pill__name--link"
-                      onClick={(e) => handleFileClick(e, f)}
-                    >
-                      {f.name}
-                    </a>
-                    : <span className="df-file-pill__name">{f.name}</span>
-                  }
-                  {f.notes && <span className="df-file-pill__notes">{f.notes}</span>}
+            files.map(f => {
+              const isVirtual = ['dp-receipt', 'final-design', 'fp-receipt', 'jo-sheet'].includes(f.id)
+              return (
+                <div key={f.id} className="df-file-pill" style={isVirtual ? { borderLeft: '3px solid #1e40af', background: '#f8fafc' } : {}}>
+                  <span className="df-file-pill__icon" style={{ color: isVirtual ? '#1e40af' : 'inherit' }}>{isVirtual ? '🔗' : '◈'}</span>
+                  <div className="df-file-pill__info">
+                    {f.url
+                      ? <a
+                        href={f.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="df-file-pill__name df-file-pill__name--link"
+                        onClick={(e) => handleFileClick(e, f)}
+                      >
+                        {f.name}
+                      </a>
+                      : f.type === 'sheet'
+                        ? <button 
+                            className="df-file-pill__name df-file-pill__name--link" 
+                            style={{ background: 'none', border: 'none', padding: 0, textAlign: 'left', font: 'inherit', cursor: 'pointer' }}
+                            onClick={() => setSheetModal(order)}
+                          >
+                            {f.name}
+                          </button>
+                        : <span className="df-file-pill__name">{f.name}</span>
+                    }
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      {f.notes && <span className="df-file-pill__notes">{f.notes}</span>}
+                      {isVirtual && <span style={{ fontSize: 9, background: '#dbeafe', color: '#1e40af', padding: '1px 5px', borderRadius: 4, fontWeight: 700, textTransform: 'uppercase' }}>Synced from JOS</span>}
+                    </div>
+                  </div>
+                  <span className="df-file-pill__date">{formatDate(f.uploadedAt)}</span>
+                  {!isVirtual && (
+                    <>
+                      <button className="df-file-pill__edit" onClick={() => openEdit(order, f)} title="Edit file">✎</button>
+                      <button className="df-file-pill__remove" onClick={() => handleRemoveFile(order, f.id)} title="Remove file">✕</button>
+                    </>
+                  )}
                 </div>
-                <span className="df-file-pill__date">{formatDate(f.uploadedAt)}</span>
-                <button className="df-file-pill__edit" onClick={() => openEdit(order, f)} title="Edit file">✎</button>
-                <button className="df-file-pill__remove" onClick={() => handleRemoveFile(order, f.id)} title="Remove file">✕</button>
-              </div>
-            ))
+              )
+            })
           )}
         </div>
 
