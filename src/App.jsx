@@ -21,7 +21,11 @@ import Users from './pages/Users'
 
 // ── Authenticated shell ──────────────────────────────────────
 function AppInner() {
-  const [page, setPage] = useState('dashboard')
+  const [page, setPage] = useState(() => localStorage.getItem('ims_active_page') || 'dashboard')
+  
+  useEffect(() => {
+    localStorage.setItem('ims_active_page', page)
+  }, [page])
   const { lowStockItems } = useApp()
   const criticalCount = lowStockItems.filter(m => m.status === 'Critical').length
   const lowCount = lowStockItems.filter(m => m.status === 'Low').length
