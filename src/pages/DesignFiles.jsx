@@ -153,6 +153,16 @@ export default function DesignFiles() {
         isJOS: true 
       })
     }
+    if (order.customizationDetails?.logoImage) {
+      virtualFiles.push({
+        id: 'logo-image',
+        name: 'Customer Logo',
+        url: order.customizationDetails.logoImage,
+        notes: 'Original Logo File',
+        uploadedAt: order.createdAt,
+        isJOS: true
+      })
+    }
 
     const synthesizedFiles = [
       ...(order.designFiles || []),
@@ -196,12 +206,21 @@ export default function DesignFiles() {
 
 
 
+        <div className="df-card__gallery">
+          {files.filter(f => isImage(f.url)).map(f => (
+            <div key={f.id} className="df-card__thumb" onClick={(e) => handleFileClick(e, f)} title={f.name}>
+              <img src={f.url} alt={f.name} />
+              {f.isJOS && <span className="df-card__thumb-jos">JOS</span>}
+            </div>
+          ))}
+        </div>
+
         <div className="df-card__files">
           {files.length === 0 ? (
             <div className="df-card__no-files"><span>No files attached yet</span></div>
           ) : (
             files.map(f => {
-              const isVirtual = ['dp-receipt', 'final-design', 'fp-receipt', 'jo-sheet'].includes(f.id)
+              const isVirtual = ['dp-receipt', 'final-design', 'fp-receipt', 'jo-sheet', 'logo-image'].includes(f.id)
               return (
                 <div key={f.id} className="df-file-pill" style={isVirtual ? { borderLeft: '3px solid #1e40af', background: '#f8fafc' } : {}}>
                   <span className="df-file-pill__icon" style={{ color: isVirtual ? '#1e40af' : 'inherit' }}>{isVirtual ? '🔗' : '◈'}</span>
