@@ -114,19 +114,25 @@ export default function Production() {
   }
 
 
-  const stageIdx = (order) => PRODUCTION_STAGES.indexOf(order.status)
+  const getMappedStatus = (status) => {
+    if (status === 'pending' || status === 'pending-payment') return 'Order Received'
+    return status
+  }
+
+  const stageIdx = (order) => PRODUCTION_STAGES.indexOf(getMappedStatus(order.status))
   const isLastStage = (order) => stageIdx(order) === PRODUCTION_STAGES.length - 1
 
   const renderStageModal = () => {
     if (!stageModal) return null
     const { order, stageIdx: si, nextStage } = stageModal
+    const currentStatus = getMappedStatus(order.status)
 
     return (
       <Modal open={true} onClose={closeStage} title={`Advance to: ${nextStage}`} size="md">
         <div style={{ background:'var(--gray-surface)', borderRadius:'var(--radius-md)', padding:'12px 16px', marginBottom:16 }}>
           <p style={{ fontWeight:600, fontSize:14 }}>{order.orderId} — {order.customer}</p>
           <p style={{ fontSize:12, color:'var(--gray-mid)', marginTop:3 }}>{order.design}</p>
-          <p style={{ fontSize:12, color:'var(--gray-mid)', marginTop:2 }}>Current stage: <strong>{order.status}</strong> → <strong style={{ color:'var(--black)' }}>{nextStage}</strong></p>
+          <p style={{ fontSize:12, color:'var(--gray-mid)', marginTop:2 }}>Current stage: <strong>{currentStatus}</strong> → <strong style={{ color:'var(--black)' }}>{nextStage}</strong></p>
         </div>
 
         {/* Designing: Downpayment and Proof of Payment */}
@@ -303,7 +309,7 @@ export default function Production() {
 
       <div className="production-board animate-fade-up">
         {PRODUCTION_STAGES.map((stage, si) => {
-          const stageOrders = activeOrders.filter(o => o.status === stage)
+          const stageOrders = activeOrders.filter(o => getMappedStatus(o.status) === stage)
           const isLast = si === PRODUCTION_STAGES.length - 1
           return (
             <div key={stage} className="prod-col" style={{ animationDelay:`${si*45}ms` }}>
