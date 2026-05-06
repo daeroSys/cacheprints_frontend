@@ -440,6 +440,7 @@ export default function Orders() {
                     </thead>
                     <tbody>
                       {(viewModal.rows || []).map((row, i) => {
+                        if (!row) return null;
                         const count = viewModal.rows?.length || 1;
                         const totalAddons = (viewModal.rows || []).reduce((s, r) => s + (r.addOnPrice || 0), 0);
                         const derivedBase = (viewModal.totalAmount - totalAddons) / count;
@@ -492,6 +493,7 @@ export default function Orders() {
                         <td style={{ padding: '10px 14px', textAlign: 'right', fontWeight: 800, fontSize: 15, color: '#fff', fontVariantNumeric: 'tabular-nums' }}>
                           {(() => {
                             const computed = (viewModal.rows || []).reduce((s, r) => {
+                              if (!r) return s;
                               const up = viewModal.upperPrice || 450, lp = viewModal.lowerPrice || 450
                               return s + (r.upperType && r.upperSize ? up : 0) + (r.lowerType && r.lowerSize ? lp : 0)
                             }, 0)

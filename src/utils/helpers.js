@@ -3,7 +3,9 @@ export const formatCurrency = (amount) =>
 
 export const formatDate = (dateStr) => {
   if (!dateStr) return '—'
-  return new Date(dateStr).toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric' })
+  const d = new Date(dateStr)
+  if (isNaN(d.getTime())) return '—'
+  return d.toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric' })
 }
 
 export const formatDateTime = (isoStr) => {
