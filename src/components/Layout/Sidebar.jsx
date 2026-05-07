@@ -9,7 +9,7 @@ const ALL_NAV = [
   { key:'transactions', label:'Inventory Transactions', icon:'⇅', staffOk: true },
   { key:'orders',       label:'Job Orders',             icon:'◻', staffOk: true },
   { key:'production',   label:'Production Tracking',   icon:'◎', staffOk: true },
-  { key:'designs',      label:'Design Files',          icon:'✎', staffOk: true },
+//  { key:'designs',      label:'Design Files',          icon:'✎', staffOk: true },
   { key:'reports',      label:'Reports',               icon:'⊞', staffOk: true },
   { key:'archive',      label:'Archive',               icon:'⊟', staffOk: false },
   { key:'activity',     label:'Activity Log',          icon:'≡', staffOk: false },
