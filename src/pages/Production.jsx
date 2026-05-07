@@ -276,13 +276,17 @@ export default function Production() {
         {nextStage === 'Quality Check' ? (
           <div className="form-group">
             <label className="form-label" style={{ fontWeight: 700, color: 'var(--black)' }}>THREAD TYPE and COLOR used</label>
-            <input 
+            <select 
               className="form-input" 
               value={formData.threadName||''} 
               onChange={e => setFormData(p => ({ ...p, threadName: e.target.value }))} 
-              placeholder="e.g. SEWING THREAD (BLACK)" 
-              style={{ borderColor: 'var(--black)', borderWidth: 2 }}
-            />
+              style={{ borderColor: 'var(--black)', borderWidth: 2, background: '#fff' }}
+            >
+              <option value="">-- Select Thread --</option>
+              {activeMats.filter(m => (m.category || '').toLowerCase() === 'thread').map(m => (
+                <option key={m.id} value={m.name}>{m.name}</option>
+              ))}
+            </select>
           </div>
         ) : (
           <div className="form-group">
