@@ -321,7 +321,7 @@ export default function Production() {
                 {stageOrders.length === 0 && <div className="prod-empty">No orders</div>}
                 {stageOrders.map(order => {
                   const daysLeft = getDaysUntil(order.deadline)
-                  const totalPcs = (order.items||[]).reduce((s,it)=>s+Object.values(it.sizes||{}).reduce((a,v)=>a+(Number(v)||0),0),0)
+                  const totalPcs = (order.rows || order.items || []).length
                   return (
                     <div key={order.id} className={`prod-card ${daysLeft<=2?'prod-card--urgent':''}`}>
                       <div className="prod-card__top">
