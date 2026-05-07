@@ -59,7 +59,8 @@ export default function Orders() {
 
   const filterList = (list, isCompleted = false) => list.filter(o => {
     const term = search.toLowerCase()
-    const ms = o.customer.toLowerCase().includes(term) ||
+    const custName = typeof o.customer === 'object' ? (o.customerName || '—') : (o.customer || '—')
+    const ms = custName.toLowerCase().includes(term) ||
       (o.teamName || '').toLowerCase().includes(term) ||
       (o.orderId || '').toLowerCase().includes(term)
     
@@ -142,7 +143,7 @@ export default function Orders() {
     { key: 'orderId', label: 'Order ID', render: v => <span style={{ fontFamily: 'monospace', fontWeight: 600, fontSize: 13 }}>{v}</span> },
     { key: 'customer', label: 'Customer', render: (v, row) => (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-        <p style={{ fontWeight: 700, color: 'var(--black)', fontSize: 13, lineHeight: 1.2 }}>{v}</p>
+        <p style={{ fontWeight: 700, color: 'var(--black)', fontSize: 13, lineHeight: 1.2 }}>{typeof v === 'object' ? (row.customerName || '—') : (v || '—')}</p>
         <p style={{ fontSize: 11, color: '#444', fontWeight: 600 }}>{row.teamName || row.design || '—'}</p>
         <p style={{ fontSize: 10, color: 'var(--gray-mid)', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.02em' }}>{row.productType || '—'}</p>
       </div>
@@ -167,7 +168,7 @@ export default function Orders() {
     { key: 'orderId', label: 'Order ID', render: v => <span style={{ fontFamily: 'monospace', fontWeight: 600, fontSize: 13 }}>{v}</span> },
     { key: 'customer', label: 'Customer', render: (v, row) => (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-        <p style={{ fontWeight: 700, color: 'var(--black)', fontSize: 13, lineHeight: 1.2 }}>{v}</p>
+        <p style={{ fontWeight: 700, color: 'var(--black)', fontSize: 13, lineHeight: 1.2 }}>{typeof v === 'object' ? (row.customerName || '—') : (v || '—')}</p>
         <p style={{ fontSize: 11, color: '#444', fontWeight: 600 }}>{row.teamName || row.design || '—'}</p>
         <p style={{ fontSize: 10, color: 'var(--gray-mid)', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.02em' }}>{row.productType || '—'}</p>
       </div>
@@ -421,7 +422,8 @@ export default function Orders() {
                       const up = viewModal.upperPrice || 450, lp = viewModal.lowerPrice || 450
                       return s + (r.upperType && r.upperSize ? up : 0) + (r.lowerType && r.lowerSize ? lp : 0)
                     }, 0)
-                    return formatCurrency(viewModal.totalAmount || computed)
+                    const totalAmt = viewModal.totalAmount || viewModal.totalPrice || computed
+                    return formatCurrency(totalAmt)
                   })()}
                 </p>
                 <span style={{ display: 'inline-block', marginTop: 4, padding: '3px 10px', borderRadius: 20, fontSize: 11, fontWeight: 700, background: '#2e7d32', color: '#fff' }}>Paid</span>
@@ -465,9 +467,10 @@ export default function Orders() {
                     <tbody>
                       {(viewModal.rows || []).map((row, i) => {
                         if (!row) return null;
-                        const count = viewModal.rows?.length || 1;
+                        const count = (viewModal.rows?.length) || 1;
                         const totalAddons = (viewModal.rows || []).reduce((s, r) => s + (r?.addOnPrice || 0), 0);
-                        const derivedBase = (viewModal.totalAmount - totalAddons) / count;
+                        const baseAmt = viewModal.totalAmount || viewModal.totalPrice || 0;
+                        const derivedBase = (baseAmt - totalAddons) / count;
                         const up = viewModal.upperPrice || (derivedBase > 0 ? derivedBase : 650);
 
                         const addOnP = row.addOnPrice || 0
@@ -525,7 +528,8 @@ export default function Orders() {
                               const up = viewModal.upperPrice || 450, lp = viewModal.lowerPrice || 450
                               return s + (r.upperType && r.upperSize ? up : 0) + (r.lowerType && r.lowerSize ? lp : 0)
                             }, 0)
-                            return formatCurrency(viewModal.totalAmount || computed)
+                            const totalAmt = viewModal.totalAmount || viewModal.totalPrice || computed
+                            return formatCurrency(totalAmt)
                           })()}
                         </td>
                       </tr>
