@@ -29,9 +29,9 @@ export default function Dashboard({ onNav }) {
   // ── Scoped data ──
   const periodOrders    = orders.filter(o => !o.isArchived && inRange(o.createdAt, range.from, range.to))
   const periodPurchases = purchases.filter(p => p.isReceived && inRange(p.receivedAt || p.date, range.from, range.to))
-  const periodRevenue   = periodOrders.reduce((s, o) => s + (o.totalAmount || 0), 0)
-  const periodCollected = periodOrders.reduce((s, o) => s + (o.paidAmount || 0), 0)
-  const periodPurchCost = periodPurchases.reduce((s, p) => s + (p.overallCost || 0), 0)
+  const periodRevenue      = periodOrders.reduce((s, o) => s + (o.paidAmount || 0), 0)
+  const periodCollectibles = periodOrders.reduce((s, o) => s + ((o.totalAmount || 0) - (o.paidAmount || 0)), 0)
+  const periodPurchCost    = periodPurchases.reduce((s, p) => s + (p.overallCost || 0), 0)
 
   // ── Period transactions ──
   const periodTxns = transactions.filter(t => inRange(t.date, range.from, range.to))
@@ -91,8 +91,14 @@ export default function Dashboard({ onNav }) {
         <StatCard
           label="Revenue"
           value={formatCurrency(periodRevenue)}
-          sub={`${formatCurrency(periodCollected)} collected`}
+          sub="Payments received"
           icon="₱" delay={0}
+        />
+        <StatCard
+          label="Collectibles"
+          value={formatCurrency(periodCollectibles)}
+          sub="Remaining balances"
+          icon="✓" delay={60}
         />
         <StatCard
           label="Purchases"

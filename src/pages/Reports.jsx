@@ -42,9 +42,9 @@ export default function Reports() {
   const filteredTxns      = transactions.filter(t => inRange(t.date, range.from, range.to))
   const filteredReceipts  = filteredPurchases.filter(p => p.receiptImage)
 
-  const periodRevenue   = filteredOrders.reduce((s, o) => s + (o.totalAmount || 0), 0)
-  const periodCollected = filteredOrders.reduce((s, o) => s + (o.paidAmount || 0), 0)
-  const periodPurchCost = filteredPurchases.reduce((s, p) => s + (p.overallCost || 0), 0)
+  const periodRevenue      = filteredOrders.reduce((s, o) => s + (o.paidAmount || 0), 0)
+  const periodCollectibles = filteredOrders.reduce((s, o) => s + ((o.totalAmount || 0) - (o.paidAmount || 0)), 0)
+  const periodPurchCost    = filteredPurchases.reduce((s, p) => s + (p.overallCost || 0), 0)
 
   // ── Top 5 Most Used Fabrics ──
   const topFabrics = useMemo(() => {
@@ -96,7 +96,7 @@ export default function Reports() {
   const maxCategoryVal = Math.max(1, ...Object.values(categoryTotals).map(v => v || 0))
 
   // ── Purchase vs Revenue chart (simple bar chart via CSS) ──
-  const maxBarVal = Math.max(1, periodRevenue, periodPurchCost)
+  const maxBarVal = Math.max(1, periodRevenue, periodPurchCost, periodCollectibles)
 
   // ── Generate Report Modal ──
   const [genModal, setGenModal] = useState(false)
@@ -155,7 +155,7 @@ export default function Reports() {
 
     const data = [
       { label: 'Revenue', value: periodRevenue, color: '#2e7d32' },
-      { label: 'Collected', value: periodCollected, color: '#1565c0' },
+      { label: 'Collectibles', value: periodCollectibles, color: '#1565c0' },
       { label: 'Purchases', value: periodPurchCost, color: '#c62828' },
     ]
     const maxVal = Math.max(1, ...data.map(d => d.value))
@@ -207,7 +207,7 @@ export default function Reports() {
       ctx.font = '12px "Segoe UI", sans-serif'
       ctx.fillText(d.label, x + barW / 2, padding.top + chartH + 20)
     })
-  }, [periodRevenue, periodCollected, periodPurchCost])
+  }, [periodRevenue, periodCollectibles, periodPurchCost])
 
   return (
     <div>
@@ -240,8 +240,8 @@ export default function Reports() {
 
       {/* ── Stat Cards ── */}
       <div className="reports-stats animate-fade-up delay-1">
-        <StatCard label="Revenue"       value={formatCurrency(periodRevenue)}   sub="All job orders"     icon="₱" delay={0} />
-        <StatCard label="Collected"     value={formatCurrency(periodCollected)} sub="Payments received"  icon="✓" delay={60} />
+        <StatCard label="Revenue"       value={formatCurrency(periodRevenue)}   sub="Payments received"     icon="₱" delay={0} />
+        <StatCard label="Collectibles"  value={formatCurrency(periodCollectibles)} sub="Remaining balances"  icon="✓" delay={60} />
         <StatCard label="Total Purchases" value={formatCurrency(periodPurchCost)} sub="Received purchases" icon="↓" delay={120} />
       </div>
 
