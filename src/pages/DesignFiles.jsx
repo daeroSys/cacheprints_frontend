@@ -10,7 +10,7 @@ import { printJobOrderSheet } from '../utils/jobOrderSheetPrint'
 import './PageCommon.css'
 import './DesignFiles.css'
 
-import { PERIOD_PRESETS, getPresetRange, inRange } from '../utils/helpers'
+import { PERIOD_PRESETS, getPresetRange, inRange, toLocalISO } from '../utils/helpers'
 
 export default function DesignFiles() {
   const { orders, updateOrder } = useApp()
@@ -19,8 +19,8 @@ export default function DesignFiles() {
 
   // ── Period filter ──
   const [period, setPeriod] = useState('today')
-  const [customFrom, setCustomFrom] = useState(() => { const d = new Date(); d.setDate(d.getDate() - 7); return d.toISOString().slice(0, 10) })
-  const [customTo, setCustomTo] = useState(() => new Date().toISOString().slice(0, 10))
+  const [customFrom, setCustomFrom] = useState(() => { const d = new Date(); d.setDate(d.getDate() - 7); return toLocalISO(d) })
+  const [customTo, setCustomTo] = useState(() => toLocalISO(new Date()))
   const [previewFile, setPreviewFile] = useState(null); // { name, url }
   const [sheetModal, setSheetModal] = useState(null); // order object
 
@@ -122,51 +122,8 @@ export default function DesignFiles() {
   };
 
   const renderOrderCard = (order, i) => {
-    const virtualFiles = []
-    if (order.paymentReceipt) {
-      virtualFiles.push({ 
-        id: 'dp-receipt', 
-        name: 'Downpayment Proof', 
-        url: order.paymentReceipt, 
-        notes: 'Initial Receipt', 
-        uploadedAt: order.paymentReceiptDate || order.createdAt,
-        isJOS: true 
-      })
-    }
-    if (order.finalDesignUrl) {
-      virtualFiles.push({ 
-        id: 'final-design', 
-        name: 'Final Approved Design', 
-        url: order.finalDesignUrl, 
-        notes: 'Printing File', 
-        uploadedAt: order.updatedAt,
-        isJOS: true 
-      })
-    }
-    if (order.finalPaymentReceipt) {
-      virtualFiles.push({ 
-        id: 'fp-receipt', 
-        name: 'Remaining Balance Proof', 
-        url: order.finalPaymentReceipt, 
-        notes: 'Final Payment', 
-        uploadedAt: order.finalPaymentReceiptDate || order.updatedAt,
-        isJOS: true 
-      })
-    }
-    if (order?.customizationDetails?.logoImage) {
-      virtualFiles.push({
-        id: 'logo-image',
-        name: 'Customer Logo',
-        url: order.customizationDetails.logoImage,
-        notes: 'Original Logo File',
-        uploadedAt: order.createdAt,
-        isJOS: true
-      })
-    }
-
     const synthesizedFiles = [
       ...(order.designFiles || []),
-      ...virtualFiles,
       { id: 'jo-sheet', name: 'Job Order Sheet', url: null, type: 'sheet', notes: 'System Generated', uploadedAt: order.updatedAt, isJOS: true }
     ]
 
