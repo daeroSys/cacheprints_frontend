@@ -3,7 +3,7 @@ import { useApp } from '../context/AppContext'
 import StatCard from '../components/ui/StatCard'
 import Badge from '../components/ui/Badge'
 import PageHeader from '../components/ui/PageHeader'
-import { formatCurrency, formatDate, getStatusColor, PERIOD_PRESETS, getPresetRange, inRange, toLocalISO, calculateRevenue, calculateCollectibles } from '../utils/helpers'
+import { formatCurrency, formatDate, getStatusColor, PERIOD_PRESETS, getPresetRange, inRange, toLocalISO, calculateRevenue, calculateCollectibles, getRangeLabel } from '../utils/helpers'
 import './Dashboard.css'
 
 export default function Dashboard({ onNav }) {
@@ -21,10 +21,7 @@ export default function Dashboard({ onNav }) {
     return getPresetRange(period) || getPresetRange('today')
   }, [period, customFrom, customTo])
 
-  const rangeLabel = useMemo(() => {
-    const fmt = (d) => d.toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })
-    return `${fmt(range.from)} – ${fmt(range.to)}`
-  }, [range])
+  const rangeLabel = useMemo(() => getRangeLabel(period, range), [period, range])
 
   // ── Scoped data ──
   const periodOrders    = orders.filter(o => !o.isArchived && inRange(o.createdAt, range.from, range.to))
@@ -84,7 +81,7 @@ export default function Dashboard({ onNav }) {
             <input type="date" className="form-input" style={{ width: 150, padding: '6px 10px', fontSize: 12 }} value={customTo} onChange={e => setCustomTo(e.target.value)} />
           </div>
         )}
-        <span className="period-label">📅 {rangeLabel}</span>
+        {rangeLabel && <span className="period-label">📅 {rangeLabel}</span>}
       </div>
 
       <div className="dashboard__stats">

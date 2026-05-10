@@ -3,7 +3,7 @@ import { useApp } from '../context/AppContext'
 import PageHeader from '../components/ui/PageHeader'
 import StatCard from '../components/ui/StatCard'
 import Modal from '../components/ui/Modal'
-import { formatCurrency, formatDate, PERIOD_PRESETS, getPresetRange, inRange, toLocalISO, calculateRevenue, calculateCollectibles } from '../utils/helpers'
+import { formatCurrency, formatDate, PERIOD_PRESETS, getPresetRange, inRange, toLocalISO, calculateRevenue, calculateCollectibles, getRangeLabel } from '../utils/helpers'
 import { generateReportHTML } from '../utils/reportGenerator'
 import './PageCommon.css'
 import './Reports.css'
@@ -31,10 +31,7 @@ export default function Reports() {
     return getPresetRange(period) || getPresetRange('today')
   }, [period, customFrom, customTo])
 
-  const rangeLabel = useMemo(() => {
-    const fmt = (d) => d.toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })
-    return `${fmt(range.from)} – ${fmt(range.to)}`
-  }, [range])
+  const rangeLabel = useMemo(() => getRangeLabel(period, range), [period, range])
 
   // ── Filtered data ──
   const filteredOrders    = orders.filter(o => !o.isArchived && inRange(o.createdAt, range.from, range.to))
@@ -235,7 +232,7 @@ export default function Reports() {
             <input type="date" className="form-input" style={{ width: 150, padding: '6px 10px', fontSize: 12 }} value={customTo} onChange={e => setCustomTo(e.target.value)} />
           </div>
         )}
-        <span className="period-label">📅 {rangeLabel}</span>
+        {rangeLabel && <span className="period-label">📅 {rangeLabel}</span>}
       </div>
 
       {/* ── Stat Cards ── */}

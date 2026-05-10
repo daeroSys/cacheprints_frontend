@@ -8,7 +8,7 @@ import { usePagination } from '../hooks/usePagination'
 import { formatDate, getStatusColor } from '../utils/helpers'
 import './PageCommon.css'
 
-import { PERIOD_PRESETS, getPresetRange, inRange } from '../utils/helpers'
+import { PERIOD_PRESETS, getPresetRange, inRange, getRangeLabel } from '../utils/helpers'
 
 export default function Transactions() {
   const { transactions } = useApp()
@@ -28,10 +28,7 @@ export default function Transactions() {
     return getPresetRange(period) || getPresetRange('today')
   }, [period, customFrom, customTo])
 
-  const rangeLabel = useMemo(() => {
-    const fmt = (d) => d.toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })
-    return `${fmt(range.from)} – ${fmt(range.to)}`
-  }, [range])
+  const rangeLabel = useMemo(() => getRangeLabel(period, range), [period, range])
 
   const filtered = useMemo(() => {
     return transactions.filter(t => {
@@ -114,7 +111,7 @@ export default function Transactions() {
               <input type="date" className="form-input" style={{ width: 140, padding: '6px 10px', fontSize: 12 }} value={customTo} onChange={e => { setCustomTo(e.target.value); setPage(1); }} />
             </div>
           )}
-          <span className="period-label">📅 {rangeLabel}</span>
+          {rangeLabel && <span className="period-label">📅 {rangeLabel}</span>}
         </div>
 
         {/* Type filter */}

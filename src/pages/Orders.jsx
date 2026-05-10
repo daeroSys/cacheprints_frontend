@@ -8,7 +8,7 @@ import Badge from '../components/ui/Badge'
 import Modal from '../components/ui/Modal'
 import Pagination from '../components/ui/Pagination'
 import { usePagination } from '../hooks/usePagination'
-import { formatCurrency, formatDate, generateId, getStatusColor, getDaysUntil, derivePaymentStatus, nowISO, PERIOD_PRESETS, getPresetRange, inRange, toLocalISO } from '../utils/helpers'
+import { formatCurrency, formatDate, generateId, getStatusColor, getDaysUntil, derivePaymentStatus, nowISO, PERIOD_PRESETS, getPresetRange, inRange, toLocalISO, getRangeLabel } from '../utils/helpers'
 import { PRODUCTION_STAGES, SIZE_KEYS, EMPTY_SIZES } from '../utils/constants'
 import { post, put, patch } from '../utils/api'
 import './PageCommon.css'
@@ -56,10 +56,7 @@ export default function Orders() {
     return getPresetRange(period) || getPresetRange('today')
   }, [period, customFrom, customTo])
 
-  const rangeLabel = useMemo(() => {
-    const fmt = (d) => d.toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })
-    return `${fmt(range.from)} – ${fmt(range.to)}`
-  }, [range])
+  const rangeLabel = useMemo(() => getRangeLabel(period, range), [period, range])
 
   const pending = orders.filter(o => !o.isCompleted && !o.isArchived && o.status !== 'cancelled')
   const completed = orders.filter(o => o.isCompleted && !o.isArchived)
@@ -289,7 +286,7 @@ export default function Orders() {
                 <input type="date" className="form-input" style={{ width: 140, padding: '6px 10px', fontSize: 12 }} value={customTo} onChange={e => { setCustomTo(e.target.value); pgCompleted.setPage(1); }} />
               </div>
             )}
-            <span className="period-label">📅 {rangeLabel}</span>
+            {rangeLabel && <span className="period-label">📅 {rangeLabel}</span>}
           </div>
         )}
       </div>

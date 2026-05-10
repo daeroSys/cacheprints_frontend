@@ -99,6 +99,14 @@ export function getPresetRange(key) {
   }
 }
 
+export function getRangeLabel(period, range) {
+  if (period === 'all-time' || period === 'all') return ''
+  const fmt = (d) => d.toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })
+  const f = fmt(range.from)
+  const t = fmt(range.to)
+  return f === t ? f : `${f} – ${t}`
+}
+
 export function inRange(dateStr, from, to) {
   if (!dateStr) return false
   const d = new Date(dateStr)

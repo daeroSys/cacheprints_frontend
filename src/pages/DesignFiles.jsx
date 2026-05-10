@@ -11,7 +11,7 @@ import { put } from '../utils/api'
 import './PageCommon.css'
 import './DesignFiles.css'
 
-import { PERIOD_PRESETS, getPresetRange, inRange, toLocalISO } from '../utils/helpers'
+import { formatDate, formatCurrency, getStatusColor, PERIOD_PRESETS, getPresetRange, inRange, toLocalISO, getRangeLabel } from '../utils/helpers'
 
 export default function DesignFiles() {
   const { orders, updateOrder, refreshAll } = useApp()
@@ -34,10 +34,7 @@ export default function DesignFiles() {
     return getPresetRange(period) || getPresetRange('today')
   }, [period, customFrom, customTo])
 
-  const rangeLabel = useMemo(() => {
-    const fmt = (d) => d.toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })
-    return `${fmt(range.from)} – ${fmt(range.to)}`
-  }, [range])
+  const rangeLabel = useMemo(() => getRangeLabel(period, range), [period, range])
 
   const [editModal, setEditModal] = useState(null)
   const [editForm, setEditForm] = useState({ name: '', url: '', notes: '' })
@@ -281,7 +278,7 @@ export default function DesignFiles() {
               <input type="date" className="form-input" style={{ width: 140, padding: '6px 10px', fontSize: 12 }} value={customTo} onChange={e => { setCustomTo(e.target.value); pgOngoing.setPage(1); pgCompleted.setPage(1); }} />
             </div>
           )}
-          <span className="period-label">📅 {rangeLabel}</span>
+          {rangeLabel && <span className="period-label">📅 {rangeLabel}</span>}
         </div>
       </div>
 
