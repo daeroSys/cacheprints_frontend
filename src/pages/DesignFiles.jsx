@@ -122,9 +122,10 @@ export default function DesignFiles() {
   };
 
   const renderOrderCard = (order, i) => {
+    const showSheet = !['Order Received', 'Designing'].includes(order.status)
     const synthesizedFiles = [
       ...(order.designFiles || []),
-      { id: 'jo-sheet', name: 'Job Order Sheet', url: null, type: 'sheet', notes: 'System Generated', uploadedAt: order.updatedAt, isJOS: true }
+      ...(showSheet ? [{ id: 'jo-sheet', name: 'Job Order Sheet', url: null, type: 'sheet', notes: 'System Generated', uploadedAt: order.updatedAt, isJOS: true }] : [])
     ]
 
     const files = synthesizedFiles
