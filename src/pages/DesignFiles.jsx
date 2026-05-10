@@ -46,8 +46,9 @@ export default function DesignFiles() {
     [orders]
   )
 
-  const ongoingOrders = allOrders.filter(o => o.status !== 'completed' && !o.isCompleted)
+  const ongoingOrders = allOrders.filter(o => o.status !== 'completed' && o.status !== 'cancelled' && !o.isCompleted)
   const completedOrders = allOrders.filter(o => o.status === 'completed' || o.isCompleted)
+  const cancelledOrders = allOrders.filter(o => o.status === 'cancelled')
 
   const applyFilters = (list, isCompletedTab = false) => {
     return list.filter(o => {
@@ -67,9 +68,11 @@ export default function DesignFiles() {
 
   const filteredOngoing = applyFilters(ongoingOrders, false)
   const filteredCompleted = applyFilters(completedOrders, true)
+  const filteredCancelled = applyFilters(cancelledOrders, false)
 
   const pgOngoing = usePagination(filteredOngoing, 10)
   const pgCompleted = usePagination(filteredCompleted, 10)
+  const pgCancelled = usePagination(filteredCancelled, 10)
 
   const displayStatus = (order) => (order.status === 'completed' || order.isCompleted) ? 'Completed' : order.status
 
@@ -226,7 +229,7 @@ export default function DesignFiles() {
     <div>
       <PageHeader
         title="Design File Storage"
-        subtitle={`${totalOngoing} files in ongoing · ${totalCompleted} files in completed — sorted latest to oldest`}
+        subtitle={`${totalOngoing} files in ongoing · ${totalCompleted} files in completed · ${cancelledOrders.length} cancelled orders — sorted latest to oldest`}
         action={
           <button 
             className={`btn btn-secondary ${refreshing ? 'btn--loading' : ''}`} 
@@ -246,6 +249,9 @@ export default function DesignFiles() {
         </button>
         <button className={`archive-tab ${tab === 'completed' ? 'archive-tab--active' : ''}`} onClick={() => setTab('completed')}>
           Completed ({completedOrders.length})
+        </button>
+        <button className={`archive-tab ${tab === 'cancelled' ? 'archive-tab--active' : ''}`} onClick={() => setTab('cancelled')}>
+          Cancelled ({cancelledOrders.length})
         </button>
       </div>
 
@@ -315,6 +321,26 @@ export default function DesignFiles() {
                 {pgCompleted.paginated.map((order, i) => renderOrderCard(order, i))}
               </div>
               <Pagination page={pgCompleted.page} totalPages={pgCompleted.totalPages} setPage={pgCompleted.setPage} total={pgCompleted.total} pageSize={10} />
+            </>
+          )}
+        </>
+      )}
+
+      {/* Cancelled */}
+      {tab === 'cancelled' && (
+        <>
+          {filteredCancelled.length === 0 ? (
+            <div className="empty-state animate-fade-up">
+              <div className="empty-state__icon">◈</div>
+              <p className="empty-state__text">No cancelled orders found</p>
+              <p className="empty-state__sub">Try adjusting your search or date filter.</p>
+            </div>
+          ) : (
+            <>
+              <div className="df-grid animate-fade-up delay-2">
+                {pgCancelled.paginated.map((order, i) => renderOrderCard(order, i))}
+              </div>
+              <Pagination page={pgCancelled.page} totalPages={pgCancelled.totalPages} setPage={pgCancelled.setPage} total={pgCancelled.total} pageSize={10} />
             </>
           )}
         </>
