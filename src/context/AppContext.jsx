@@ -69,11 +69,11 @@ export function AppProvider({ children }) {
 
     initData()
 
-    // Background Polling: Refresh data every 30 seconds to keep systems in sync
+    // Background Polling: Refresh data every 8 seconds to keep systems in sync
     const interval = setInterval(() => {
       console.log('🔄 Background sync starting...')
       initData()
-    }, 30000)
+    }, 8000)
 
     return () => clearInterval(interval)
   }, [])
@@ -101,6 +101,11 @@ export function AppProvider({ children }) {
   const refreshTransactions = async () => {
     const res = await get('/transactions')
     if (res.ok) setTransactions(res.transactions.map(t => ({ ...t, id: t._id })))
+  }
+
+  const refreshAll = async () => {
+    console.log('🔄 Manual refresh triggered...')
+    return initData()
   }
 
   // ─── Materials ───────────────────────────────────────────────
@@ -221,6 +226,7 @@ export function AppProvider({ children }) {
       purchases, addPurchase, receivePurchase, archivePurchase, restorePurchase, deletePurchase,
       transactions, addTransaction,
       activityLog, lowStockItems,
+      refreshAll,
     }}>
       {children}
     </AppContext.Provider>

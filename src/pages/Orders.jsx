@@ -26,10 +26,11 @@ const ConfirmModal = ({ open, title, message, onConfirm, onCancel, confirmLabel 
 )
 
 export default function Orders() {
-  const { orders, addOrder, updateOrder, archiveOrder, completeOrder } = useApp()
+  const { orders, addOrder, updateOrder, archiveOrder, completeOrder, refreshAll } = useApp()
   const { guard, denied, clearDenied, isAdmin } = usePermission()
   const [tab, setTab] = useState('pending')
   const [search, setSearch] = useState('')
+  const [refreshing, setRefreshing] = useState(false)
   const [stFilter, setStFilter] = useState('All')
   const [modal, setModal] = useState(null)
   const [selected, setSelected] = useState(null)
@@ -38,6 +39,12 @@ export default function Orders() {
   const [archiveConfirm, setArchiveConfirm] = useState(null)
   const [viewModal, setViewModal] = useState(null)
   const [errors, setErrors] = useState({})
+
+  const onManualRefresh = async () => {
+    setRefreshing(true)
+    await refreshAll()
+    setTimeout(() => setRefreshing(false), 600)
+  }
 
   // ── Date Filtering (for Completed Tab) ──
   const [period, setPeriod] = useState('today')
@@ -227,7 +234,20 @@ export default function Orders() {
 
   return (
     <div>
-      <PageHeader title="Job Orders" subtitle="Manage all active and completed job orders" />
+      <PageHeader 
+        title="Job Orders" 
+        subtitle="Manage all active and completed job orders" 
+        action={
+          <button 
+            className={`btn btn-secondary ${refreshing ? 'btn--loading' : ''}`} 
+            onClick={onManualRefresh}
+            disabled={refreshing}
+            style={{ display: 'flex', alignItems: 'center', gap: 8 }}
+          >
+            {refreshing ? 'Refreshing...' : '🔄 Refresh Data'}
+          </button>
+        }
+      />
 
       <div className="oh-tabs animate-fade-up">
         {[

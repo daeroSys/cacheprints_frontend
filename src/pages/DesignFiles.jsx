@@ -7,15 +7,17 @@ import Pagination from '../components/ui/Pagination'
 import { usePagination } from '../hooks/usePagination'
 import { formatDate, formatCurrency, getStatusColor } from '../utils/helpers'
 import { printJobOrderSheet } from '../utils/jobOrderSheetPrint'
+import { put } from '../utils/api'
 import './PageCommon.css'
 import './DesignFiles.css'
 
 import { PERIOD_PRESETS, getPresetRange, inRange, toLocalISO } from '../utils/helpers'
 
 export default function DesignFiles() {
-  const { orders, updateOrder } = useApp()
+  const { orders, updateOrder, refreshAll } = useApp()
   const [tab, setTab] = useState('ongoing')
   const [search, setSearch] = useState('')
+  const [refreshing, setRefreshing] = useState(false)
 
   // ── Period filter ──
   const [period, setPeriod] = useState('today')
@@ -87,7 +89,7 @@ export default function DesignFiles() {
     setEditErrors({})
   }
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     const e = {}
     if (!editForm.name.trim()) e.name = 'File name is required.'
     if (editForm.url && editForm.url.trim() && !editForm.url.startsWith('http')) e.url = 'URL must start with http:// or https://'
@@ -97,13 +99,31 @@ export default function DesignFiles() {
     const updatedFiles = (order.designFiles || []).map(f =>
       f.id === fileId ? { ...f, name: editForm.name, url: editForm.url, notes: editForm.notes } : f
     )
-    updateOrder(order.id, { designFiles: updatedFiles })
-    setEditModal(null)
+    
+    const res = await put(`/orders/${order.id}`, { designFiles: updatedFiles })
+    if (res.ok) {
+      updateOrder(order.id, { designFiles: updatedFiles })
+      setEditModal(null)
+    } else {
+      alert(res.error || 'Failed to save changes.')
+    }
   }
 
-  const handleRemoveFile = (order, fileId) => {
+  const handleRemoveFile = async (order, fileId) => {
+    if (!window.confirm('Are you sure you want to remove this file?')) return
     const updatedFiles = (order.designFiles || []).filter(f => f.id !== fileId)
-    updateOrder(order.id, { designFiles: updatedFiles })
+    const res = await put(`/orders/${order.id}`, { designFiles: updatedFiles })
+    if (res.ok) {
+      updateOrder(order.id, { designFiles: updatedFiles })
+    } else {
+      alert(res.error || 'Failed to remove file.')
+    }
+  }
+
+  const onManualRefresh = async () => {
+    setRefreshing(true)
+    await refreshAll()
+    setTimeout(() => setRefreshing(false), 600)
   }
 
   const totalOngoing = ongoingOrders.reduce((s, o) => s + (o.designFiles?.length || 0), 0)
@@ -212,6 +232,16 @@ export default function DesignFiles() {
       <PageHeader
         title="Design File Storage"
         subtitle={`${totalOngoing} files in ongoing · ${totalCompleted} files in completed — sorted latest to oldest`}
+        action={
+          <button 
+            className={`btn btn-secondary ${refreshing ? 'btn--loading' : ''}`} 
+            onClick={onManualRefresh}
+            disabled={refreshing}
+            style={{ display: 'flex', alignItems: 'center', gap: 8 }}
+          >
+            {refreshing ? 'Refreshing...' : '🔄 Refresh Data'}
+          </button>
+        }
       />
 
       {/* Tabs */}
