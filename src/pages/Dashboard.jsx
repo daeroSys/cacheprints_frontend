@@ -3,7 +3,7 @@ import { useApp } from '../context/AppContext'
 import StatCard from '../components/ui/StatCard'
 import Badge from '../components/ui/Badge'
 import PageHeader from '../components/ui/PageHeader'
-import { formatCurrency, formatDate, getStatusColor, PERIOD_PRESETS, getPresetRange, inRange, toLocalISO } from '../utils/helpers'
+import { formatCurrency, formatDate, getStatusColor, PERIOD_PRESETS, getPresetRange, inRange, toLocalISO, calculateRevenue, calculateCollectibles } from '../utils/helpers'
 import './Dashboard.css'
 
 export default function Dashboard({ onNav }) {
@@ -29,8 +29,8 @@ export default function Dashboard({ onNav }) {
   // ── Scoped data ──
   const periodOrders    = orders.filter(o => !o.isArchived && inRange(o.createdAt, range.from, range.to))
   const periodPurchases = purchases.filter(p => p.isReceived && inRange(p.receivedAt || p.date, range.from, range.to))
-  const periodRevenue      = periodOrders.reduce((s, o) => s + (o.paidAmount || 0), 0)
-  const periodCollectibles = periodOrders.reduce((s, o) => s + ((o.totalAmount || 0) - (o.paidAmount || 0)), 0)
+  const periodRevenue      = calculateRevenue(orders, range.from, range.to)
+  const periodCollectibles = calculateCollectibles(orders.filter(o => !o.isArchived))
   const periodPurchCost    = periodPurchases.reduce((s, p) => s + (p.overallCost || 0), 0)
 
   // ── Period transactions ──

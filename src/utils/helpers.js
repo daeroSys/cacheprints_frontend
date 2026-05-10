@@ -104,3 +104,40 @@ export function inRange(dateStr, from, to) {
   const d = new Date(dateStr)
   return d >= from && d <= to
 }
+export const calculateRevenue = (orders, from, to) => {
+  return orders.reduce((sum, o) => {
+    if (o.isArchived) return sum;
+    let rev = 0;
+
+    const hasDPDate = !!o.paymentReceiptDate;
+    const compDate = o.finalPaymentReceiptDate || o.completedAt;
+    const hasCompDate = !!compDate;
+
+    // Milestone-based recognition
+    if (hasDPDate || hasCompDate) {
+      // 1. Initial/Downpayment
+      if (o.paymentReceiptDate && inRange(o.paymentReceiptDate, from, to)) {
+        const dp = (o.externalRef || o.paymentReceipt) ? 500 : (o.paidAmount || 0);
+        rev += dp;
+      }
+      // 2. Balance/Completion
+      if (compDate && inRange(compDate, from, to)) {
+        const initial = (o.externalRef || o.paymentReceipt) ? 500 : 0;
+        rev += Math.max(0, (o.totalAmount || 0) - initial);
+      }
+    } 
+    // Fallback recognition (for manual/legacy orders with no specific milestone dates)
+    else if (inRange(o.createdAt, from, to)) {
+      rev += (o.paidAmount || 0);
+    }
+    
+    return sum + rev;
+  }, 0);
+};
+
+export const calculateCollectibles = (orders) => {
+  return orders.reduce((s, o) => {
+    if (o.isArchived || o.isCompleted) return s;
+    return s + Math.max(0, (o.totalAmount || 0) - (o.paidAmount || 0));
+  }, 0);
+};

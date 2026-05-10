@@ -3,7 +3,7 @@ import { useApp } from '../context/AppContext'
 import PageHeader from '../components/ui/PageHeader'
 import StatCard from '../components/ui/StatCard'
 import Modal from '../components/ui/Modal'
-import { formatCurrency, formatDate, PERIOD_PRESETS, getPresetRange, inRange, toLocalISO } from '../utils/helpers'
+import { formatCurrency, formatDate, PERIOD_PRESETS, getPresetRange, inRange, toLocalISO, calculateRevenue, calculateCollectibles } from '../utils/helpers'
 import { generateReportHTML } from '../utils/reportGenerator'
 import './PageCommon.css'
 import './Reports.css'
@@ -42,8 +42,8 @@ export default function Reports() {
   const filteredTxns      = transactions.filter(t => inRange(t.date, range.from, range.to))
   const filteredReceipts  = filteredPurchases.filter(p => p.receiptImage)
 
-  const periodRevenue      = filteredOrders.reduce((s, o) => s + (o.paidAmount || 0), 0)
-  const periodCollectibles = filteredOrders.reduce((s, o) => s + ((o.totalAmount || 0) - (o.paidAmount || 0)), 0)
+  const periodRevenue      = calculateRevenue(orders, range.from, range.to)
+  const periodCollectibles = calculateCollectibles(orders.filter(o => !o.isArchived && inRange(o.createdAt, range.from, range.to)))
   const periodPurchCost    = filteredPurchases.reduce((s, p) => s + (p.overallCost || 0), 0)
 
   // ── Top 5 Most Used Fabrics ──
